@@ -1,6 +1,6 @@
 # main text of home
 name: Bryan Absher
-bio: A Man who travels the world eating noodles
+bio: A developer with a passion for creating effective solutions
 
 # twitter summary info
 description: A blog about technology and stuff related
@@ -49,13 +49,13 @@ github: babsher
 # lanyrd: mylanyrd
 email: bryan.absher@gmail.com
 
-authors:
-    johndoe:
-        name: Bryan Absher
-        bio:
-        external-image: false
-        picture: assets/images/profile.jpg
-        twitter: AbsherBryan
+# authors:
+#    johndoe:
+#        name: Bryan Absher
+#        bio:
+#        external-image: false
+#        picture: assets/images/profile.jpg
+#        twitter: AbsherBryan
 
 # do you want a larger site? change the option below
 # options: [normal, large] | default: normal
@@ -63,8 +63,8 @@ authors:
 width: normal
 
 # if you don't need pagination, comment the *paginate* configs below
-# paginate: 5
-# paginate_path: "blog/:num/"
+paginate: 5
+paginate_path: "blog/:num/"
 
 # if you don't need projects, comment the *projects* configs below
 projects: false
@@ -86,7 +86,7 @@ related: false
 post-advance-links: [blog]
 
 # show author block at the end of a post ?
-show-author: true
+show-author: false
 
 # do you want some animations?
 animation: false
