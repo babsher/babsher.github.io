@@ -2,12 +2,15 @@
 title: "Outbox Design Pattern"
 layout: post
 date: 2021-03-30 22:10
-tag: outbox pubsub event
+tag: 
+- outbox
+- pubsub
+image:
 headerImage: false
 projects: false
-hidden: true # don't count this post in blog pagination
+hidden: true
 description: "This is a simple and minimalist template for Jekyll for those who likes to eat noodles."
-category: outbox
+category: blog
 author: bryan
 externalLink: true
 ---
@@ -35,7 +38,7 @@ However, it has a lot of draw backs.
 
 Ok, lets break this down.
 
-## 1. Probability of Failure
+### 1. Probability of Failure
 
 The probability of failure of the API roughly follows this formula:
 
@@ -44,19 +47,19 @@ P(bug in the API) + P(database is down) + P(event bus is down) = Total Probabili
 Assuming all these events are independant. So adding another external dependency increases the probability that
 the request will fail. This bad... As engineers this is exactly what we are trying to prevent.
 
-## 2. Increased latency for clients
+### 2. Increased latency for clients
 
 We got another remote thing to call. Typically that other thing has to complete before returning a response to 
 the client. Waiting until the other request complete is required if it is required to be transactional with the
 database.
 
-## 3. Bad Customer Experience
+### 3. Bad Customer Experience
 
 In the case above we are returning a failure to the clients of the API because a non critical part of the infrastructure, something
 the customer does not know about or care about, caused the API request to fail. This makes us look bad and potenailly loses buisness
 for our e-commerce company. 
 
-# So How Do We Do Better?
+## So How Do We Do Better?
 
 So lets talk about what the outbox is and how it solves this problem. The outbox is a table where we can record any side effects that
 we want to happen after the original transaction compeletes successfully and then have a background process transactionally call the
@@ -70,4 +73,5 @@ Some ones I have used before are:
 
 * [ActiveRecord Delayed Job](https://github.com/collectiveidea/delayed_job)
 * [db-scheduler](https://github.com/kagkarlsson/db-scheduler)
+
 

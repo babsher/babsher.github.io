@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-03-30T22:20:06-07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Bryan Absher</title><subtitle>A blog about technology and stuff related</subtitle><entry><title type="html">Outbox Design Pattern</title><link href="http://localhost:4000/event-outbox-intro/" rel="alternate" type="text/html" title="Outbox Design Pattern" /><published>2021-03-30T22:10:00-07:00</published><updated>2021-03-30T22:10:00-07:00</updated><id>http://localhost:4000/event-outbox-intro</id><content type="html" xml:base="http://localhost:4000/event-outbox-intro/">&lt;h1 id=&quot;outbox-design-patter&quot;&gt;Outbox Design Patter&lt;/h1&gt;
+
+&lt;p&gt;A freind and mentor of mine recently named this simple and powerful design pattern for me and I thought I would
+share it with the world. It solves a big problem with service oriented architectures where network calls can
+be unreliable so every new dependency increases the probabilty of a fault happening.&lt;/p&gt;
+
+&lt;p&gt;So lets say that you have a service that manages orders for an e-commerce company and whenever an order is
+created you want to publish an event to an event bus like Kafka or Google PubSub. We only want to publish
+the event if the order is valid and it is successfully written to the database.&lt;/p&gt;
+
+&lt;p&gt;So what happens when the event bus is down?&lt;/p&gt;
+
+&lt;p&gt;You can fail the transaction and return an 503, right?&lt;/p&gt;
+
+&lt;p&gt;This is defiently the easiest to implement and its not wrong if you absolutely must publish the event right away.
+However, it has a lot of draw backs.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Signficant increase in the probably of failure (returning a non 2xx response)&lt;/li&gt;
+  &lt;li&gt;Increased latency for clients&lt;/li&gt;
+  &lt;li&gt;Bad customer experience as the events are not critial to their experience&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Ok, lets break this down.&lt;/p&gt;
+
+&lt;h3 id=&quot;1-probability-of-failure&quot;&gt;1. Probability of Failure&lt;/h3&gt;
+
+&lt;p&gt;The probability of failure of the API roughly follows this formula:&lt;/p&gt;
+
+&lt;p&gt;P(bug in the API) + P(database is down) + P(event bus is down) = Total Probability of Failure&lt;/p&gt;
+
+&lt;p&gt;Assuming all these events are independant. So adding another external dependency increases the probability that
+the request will fail. This bad… As engineers this is exactly what we are trying to prevent.&lt;/p&gt;
+
+&lt;h3 id=&quot;2-increased-latency-for-clients&quot;&gt;2. Increased latency for clients&lt;/h3&gt;
+
+&lt;p&gt;We got another remote thing to call. Typically that other thing has to complete before returning a response to 
+the client. Waiting until the other request complete is required if it is required to be transactional with the
+database.&lt;/p&gt;
+
+&lt;h3 id=&quot;3-bad-customer-experience&quot;&gt;3. Bad Customer Experience&lt;/h3&gt;
+
+&lt;p&gt;In the case above we are returning a failure to the clients of the API because a non critical part of the infrastructure, something
+the customer does not know about or care about, caused the API request to fail. This makes us look bad and potenailly loses buisness
+for our e-commerce company.&lt;/p&gt;
+
+&lt;h2 id=&quot;so-how-do-we-do-better&quot;&gt;So How Do We Do Better?&lt;/h2&gt;
+
+&lt;p&gt;So lets talk about what the outbox is and how it solves this problem. The outbox is a table where we can record any side effects that
+we want to happen after the original transaction compeletes successfully and then have a background process transactionally call the
+event bus.&lt;/p&gt;
+
+&lt;p&gt;This has a lot of benifits. The side effects are now trasactional with the creation of the order all at the low cost of an addtional
+database row insert.&lt;/p&gt;
+
+&lt;p&gt;Ofcourse now we have to monitor these tables and make sure the side effects are executed successully but we have libraries for that.
+Some ones I have used before are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/collectiveidea/delayed_job&quot;&gt;ActiveRecord Delayed Job&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/kagkarlsson/db-scheduler&quot;&gt;db-scheduler&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>bryan</name></author><category term="blog" /><category term="outbox" /><category term="pubsub" /><summary type="html">Outbox Design Patter</summary></entry></feed>
